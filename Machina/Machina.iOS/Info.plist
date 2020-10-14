@@ -38,5 +38,9 @@
 	<array>
 		<string>French</string>
 	</array>
+  <key>UIAppFonts</key>
+  <array>
+    <string>Minercraftory.ttf</string>
+  </array>
 </dict>
 </plist>

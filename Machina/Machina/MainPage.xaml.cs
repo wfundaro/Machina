@@ -1,9 +1,5 @@
 ﻿using Plugin.Media;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -38,15 +34,8 @@ namespace Machina
             if(file == null)
             {
                 return;
-            }
-
-            //await DisplayAlert("File location", file.Path, "OK");
-            //image.Source = ImageSource.FromStream(() =>
-            //{
-            //    var stream = file.GetStream();
-            //    return stream;
-            //});            
-            await Navigation.PushAsync(new ScannerPage(file));
+            }         
+            await Navigation.PushAsync(new ScannerPage(file), false);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Machina.Service
                 using (var content = new ByteArrayContent(byteData))
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                    response = await client.PostAsync(uri, content);
+                    response = await Task.Run(() => client.PostAsync(uri, content) );
                     if(response == null && !response.IsSuccessStatusCode)
                     {
                         return null;
