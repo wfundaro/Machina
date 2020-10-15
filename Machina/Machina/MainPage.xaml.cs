@@ -1,14 +1,23 @@
 ﻿using Plugin.Media;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Machina
 {
     public partial class MainPage : ContentPage
     {
+        public ICommand AnimationClickedCommand { get; set; }
         public MainPage()
         {
+            AnimationClickedCommand = new Command(() =>
+            {
+                _ = StartButtonClickAsync();
+            });
+            BindingContext = this;
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
         }
@@ -19,6 +28,13 @@ namespace Machina
         }
         private async Task StartButtonClickAsync()
         {
+            var network = Connectivity.NetworkAccess;
+            if(network != NetworkAccess.Internet)
+            {
+                await DisplayAlert("No network", "No internet connection available", "ok");
+                return;
+            }
+
             await CrossMedia.Current.Initialize();
             if(!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {

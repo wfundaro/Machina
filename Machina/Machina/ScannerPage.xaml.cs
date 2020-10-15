@@ -35,9 +35,8 @@ namespace Machina
             stream.Position = 0;
             imageStream.Position = 0;
             faceImage.Source = ImageSource.FromStream(() => imageStream );
-
-            LaserAnimationWithSoundAndDisplayResults();
-            StartDetection(stream);
+            _ = LaserAnimationWithSoundAndDisplayResults();
+            _ = StartDetection(stream);
         }
 
         //Laser animation
@@ -57,10 +56,23 @@ namespace Machina
             }
             laserImage.IsVisible = false;
             PlaySound("result.wav");
-            await DisplayResult();
-            await ResultsSpeech();
+            if (faceResult == null)
+            {
+                await OnErrorDetection();
+            }
+            else
+            {
+                await DisplayResult();
+                await ResultsSpeech();
+            }
         }
 
+        private async Task OnErrorDetection()
+        {
+            _ = Speak("Humain non détecté");
+            await DisplayAlert("Error", "Failed to detect an Human", "ok");
+            await Navigation.PopAsync();
+        }
         private void ContinueButtonClicked(object sender, EventArgs args)
         {
             Navigation.PopAsync();
@@ -68,6 +80,11 @@ namespace Machina
 
         private async Task DisplayResult()
         {
+            if (faceResult == null)
+            {
+                return;
+            }
+
             statusLabel.Text = "Analyse terminée";
 
             // On a récupéré les infos du visage
@@ -110,16 +127,12 @@ namespace Machina
         {
             if (faceResult == null)
             {
-                await Speak("Humain non détecté");
+                return;
             }
-            else
-            {
-                await Speak("Humain détecté");
-                await Speak("Sexe");
-                string gender = faceResult.faceAttributes.gender.ToLower().Equals("male") ? "Sexe masculin" : "Sexe féminin";
-                await Speak(gender);
-                await Speak("âge" + faceResult.faceAttributes.age.ToString() + " ans");
-            }
+            await Speak("Humain détecté");
+            string gender = faceResult.faceAttributes.gender.ToLower().Equals("male") ? "Sexe masculin" : "Sexe féminin";
+            await Speak(gender);
+            await Speak("âge" + faceResult.faceAttributes.age.ToString() + " ans");
         }
 
         private async Task InitSpeak()
